@@ -1,15 +1,26 @@
 import React, {useState} from "react";
 
 import Counter from "./components/Counter";
-import PostItem from "./components/PostItem";
+import PostsLists from "./components/PostsList";
+import MyButton from "./components/UI/button/MyButton";
 
 function App() {
-  const [value, setValue] = useState('Write there')
+
+  const [posts, setPosts] = useState([
+    {id: 1, title: "JavaScript", body: "Description"},
+    {id: 2, title: "JavaScript 2", body: "Description"},
+    {id: 3, title: "JavaScript 3", body: "Description"}
+  ])
 
   return (
     <div className="App">
       <Counter />
-      <PostItem post={{id: 1, title: "JavaScript", body: "Description"}}/>
+      <form>
+        <input type="text" placeholder="Post title" />
+        <input type="text" placeholder="Post description" />
+        <MyButton disabled>Add post</MyButton>
+      </form>
+      <PostsLists posts={posts} title={'Tasks'}/>
     </div>
   );
 }
