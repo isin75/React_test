@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
 
-import Counter from "./components/Counter";
-import PostsLists from "./components/PostsList";
-import MyButton from "./components/UI/button/MyButton";
-import MyInput from "./components/UI/input/MyInput";
+import Counter from './components/Counter';
+import PostsLists from './components/PostsList';
+import MyButton from './components/UI/button/MyButton';
+import MyInput from './components/UI/input/MyInput';
 
 function App() {
 
@@ -21,7 +21,7 @@ function App() {
         <MyInput type="text" placeholder="Post description" />
         <MyButton disabled>Add post</MyButton>
       </form>
-      <PostsLists posts={posts} title={'Tasks'}/>
+      <PostsLists posts={posts} title={"Tasks"}/>
     </div>
   );
 }
