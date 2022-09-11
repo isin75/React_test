@@ -1,11 +1,12 @@
 import React from 'react'
-
+// Импорт через модули
 import classes from './MyInput.module.css'
-
-const MyInput = (props) => {
+// Обёртывание в хук useRef(), ref - props
+const MyInput = React.forwardRef((props, ref) => {
   return (
-    <input className={classes.myInput}{...props}/>
+    // Импорт через модули, и передача props - ref
+    <input ref={ref} className={classes.myInput}{...props}/>
   )
-}
+})
 
 export default MyInput
