@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 
 import Counter from './components/Counter';
 import PostsLists from './components/PostsList';
@@ -13,14 +13,20 @@ function App() {
     {id: 3, title: "JavaScript 3", body: "Description"}
   ])
 
-  const [title, setTitle] = useState("Title")
-  const bodyRef = useRef()
+  const [title, setTitle] = useState("")
+  const [body, setBody] = useState("")
 
   const addNewPost = (e) => {
-    // отмена стандартой работы браузера
     e.preventDefault()
-    console.log(title)
-    console.log(bodyRef.current.value)
+    const newPost = {
+      id: Date.now(),
+      title,
+      body
+    }
+    console.log(newPost)
+    setPosts([...posts, newPost])
+    setTitle("")
+    setBody("")
   }
 
   return (
@@ -34,11 +40,11 @@ function App() {
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
-        {/*Неконтролируемый инпут через хук useRef(), не стоит использовать, нужно передать также ссылку на сам компонент как props, но также обернуть компонент в этот хук */}
         <MyInput
           type="text"
           placeholder="Post description"
-          ref={bodyRef}
+          value={body}
+          onChange={e => setBody(e.target.value)}
         />
         <MyButton onClick={addNewPost}>Add post</MyButton>
       </form>
