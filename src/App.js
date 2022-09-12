@@ -20,14 +20,20 @@ function App() {
     setPosts(posts.filter((p => {
       return p.id !== post.id
     })))
-    
+
   }
 
   return (
     <div className="App">
       <Counter />
       <PostForm create={createPost}/>
-      <PostsLists remove={deletedPost} posts={posts} title={"Tasks"}/>
+      {/* Условная отрисовка */}
+      {posts.length !== 0
+        ? <PostsLists remove={deletedPost} posts={posts} title={"Tasks"}/>
+        : <h1 style={{textAlign: "center"}}>
+            Постов нет
+          </h1>
+      }
     </div>
   );
 }
