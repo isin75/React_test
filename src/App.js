@@ -16,11 +16,18 @@ function App() {
     setPosts([...posts, newPost])
   }
 
+  const deletedPost = (post) => {
+    setPosts(posts.filter((p => {
+      return p.id !== post.id
+    })))
+    
+  }
+
   return (
     <div className="App">
       <Counter />
       <PostForm create={createPost}/>
-      <PostsLists posts={posts} title={"Tasks"}/>
+      <PostsLists remove={deletedPost} posts={posts} title={"Tasks"}/>
     </div>
   );
 }
