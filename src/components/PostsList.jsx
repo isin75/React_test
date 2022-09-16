@@ -3,6 +3,15 @@ import React from 'react';
 import PostItem from './PostItem';
 
 const PostsLists = ({posts, title, remove}) => {
+    // Условная отрисовка
+    if(!posts.length) {
+        return (
+            <h1 style={{textAlign: "center"}}>
+                Постов нет
+            </h1>
+        )
+    }
+
     return(
         <div>
             <h1 style={{textAlign: "center"}}>
