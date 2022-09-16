@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 
 import Counter from './components/Counter';
 import PostForm from './components/PostForm';
@@ -13,19 +13,23 @@ function App() {
   const [selecterSort, setSelecterSort] = useState("")
 
   const [posts, setPosts] = useState([
-    {id: 1, title: "JavaScript", body: "Description"},
-    {id: 2, title: "JavaScript 2", body: "Description"},
-    {id: 3, title: "JavaScript 3", body: "Description"}
+    {id: 1, title: "AvaScript", body: "BDescription"},
+    {id: 2, title: "BavaScript 2", body: "DDescription"},
+    {id: 3, title: "DavaScript 3", body: "Aescription"}
   ])
 
-  const getSortedPost = () => {
+  const sortedPost = useMemo(() => {
     if(selecterSort) {
-      return [...posts].sort((a,b) => {a[sort].localeCompare(b[sort])})
+      return [...posts].sort((a,b) => {
+        return a[selecterSort].localeCompare(b[selecterSort])
+      })
     }
     return posts
-  }
+  }, [selecterSort, posts])
 
-  const sortedPost = getSortedPost
+  const sortedAndSearchedPosts = useMemo(() => {
+    return sortedPost.filter(post => post.title.toLowerCase().includes(searchQuary))
+  }, [searchQuary, sortedPost])
 
   // callBack функция получает информацию из дочернего элемента, и перезаписует его, активация происходит когда отрабатывает
   const createPost = (newPost) => {
@@ -67,8 +71,8 @@ function App() {
         />
       </div>
       {/* Условная отрисовка */}
-      {posts.length !== 0
-        ? <PostsLists remove={deletedPost} posts={sortedPost} title={"Tasks"}/>
+      {sortedAndSearchedPosts.length !== 0
+        ? <PostsLists remove={deletedPost} posts={sortedAndSearchedPosts} title={"Tasks"}/>
         : <h1 style={{textAlign: "center"}}>
             Постов нет
           </h1>
