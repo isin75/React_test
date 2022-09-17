@@ -4,11 +4,13 @@ import Counter from './components/Counter';
 import PostFilter from './components/PostFilter';
 import PostForm from './components/PostForm';
 import PostsLists from './components/PostsList';
+import MyButton from './components/UI/button/MyButton';
+import MyModal from './components/UI/MyModal/MyModal';
 
 function App() {
 
   const [filter, setFilter] = useState({sort: "", query: ""})
-
+  const [modal, setModal] = useState(false)
   const [posts, setPosts] = useState([
     {id: 1, title: "AvaScript", body: "BDescription"},
     {id: 2, title: "BavaScript 2", body: "DDescription"},
@@ -17,9 +19,7 @@ function App() {
 
   const sortedPost = useMemo(() => {
     if(filter.sort) {
-      return [...posts].sort((a,b) => {
-        return a[filter.sort].localeCompare(b[filter.sort])
-      })
+      return [...posts].sort((a,b) => a[filter.sort].localeCompare(b[filter.sort]))
     }
     return posts
   }, [filter.sort, posts])
@@ -31,6 +31,7 @@ function App() {
   // callBack функция получает информацию из дочернего элемента, и перезаписует его, активация происходит когда отрабатывает
   const createPost = (newPost) => {
     setPosts([...posts, newPost])
+    setModal(false)
   }
 
   const deletedPost = (post) => {
@@ -42,8 +43,13 @@ function App() {
 
   return (
     <div className="App">
+      <MyButton style={{marginTop: 30}} onClick={() => setModal(true)}>
+        Create User
+      </MyButton>
+      <MyModal visible={modal} setVisible={setModal}>
+        <PostForm create={createPost}/>
+      </MyModal>
       <Counter />
-      <PostForm create={createPost}/>
       {/* сортировка и выпадающий список */}
       <hr style={{margin: "15px 0"}} />
       <PostFilter 
