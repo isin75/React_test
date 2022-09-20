@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import PostService from './API/PostService';
 
 import Counter from './components/Counter';
 import PostFilter from './components/PostFilter';
 import PostForm from './components/PostForm';
 import PostsLists from './components/PostsList';
 import MyButton from './components/UI/button/MyButton';
+import Loader from './components/UI/Loader/Loader';
 import MyModal from './components/UI/MyModal/MyModal';
 
 import { usePosts } from './hooks/usePosts';
@@ -13,11 +15,8 @@ function App() {
 
   const [filter, setFilter] = useState({sort: "", query: ""})
   const [modal, setModal] = useState(false)
-  const [posts, setPosts] = useState([
-    {id: 1, title: "AvaScript", body: "BDescription"},
-    {id: 2, title: "BavaScript 2", body: "DDescription"},
-    {id: 3, title: "DavaScript 3", body: "Aescription"}
-  ])
+  const [posts, setPosts] = useState([])
+  const [isPostsLoading, setIsPostsLoading] = useState(false)
 
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
 
@@ -34,8 +33,20 @@ function App() {
 
   }
 
+  const fetchPost = async () => {
+    setIsPostsLoading(true)
+    const posts = await PostService.getAll()
+    setPosts(posts)
+    setIsPostsLoading(false)
+  }
+
+  useEffect(() => {
+    fetchPost()
+  }, [])
+
   return (
     <div className="App">
+      <button onClick={fetchPost}>Get User</button>
       <MyButton style={{marginTop: 30}} onClick={() => setModal(true)}>
         Create User
       </MyButton>
@@ -49,7 +60,10 @@ function App() {
         filter={filter}
         setFilter={setFilter}
       />
-      <PostsLists remove={deletedPost} posts={sortedAndSearchedPosts} title={"Tasks"}/>
+      {isPostsLoading
+        ? <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}><Loader /></div>
+        : <PostsLists remove={deletedPost} posts={sortedAndSearchedPosts} title={"Tasks"}/>
+      }
     </div>
   );
 }
