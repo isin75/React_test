@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 
 import Counter from './components/Counter';
 import PostFilter from './components/PostFilter';
@@ -6,6 +6,8 @@ import PostForm from './components/PostForm';
 import PostsLists from './components/PostsList';
 import MyButton from './components/UI/button/MyButton';
 import MyModal from './components/UI/MyModal/MyModal';
+
+import { usePosts } from './hooks/usePosts';
 
 function App() {
 
@@ -17,16 +19,7 @@ function App() {
     {id: 3, title: "DavaScript 3", body: "Aescription"}
   ])
 
-  const sortedPost = useMemo(() => {
-    if(filter.sort) {
-      return [...posts].sort((a,b) => a[filter.sort].localeCompare(b[filter.sort]))
-    }
-    return posts
-  }, [filter.sort, posts])
-
-  const sortedAndSearchedPosts = useMemo(() => {
-    return sortedPost.filter(post => post.title.toLowerCase().includes(filter.query))
-  }, [filter.query, sortedPost])
+  const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
 
   // callBack функция получает информацию из дочернего элемента, и перезаписует его, активация происходит когда отрабатывает
   const createPost = (newPost) => {
