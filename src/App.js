@@ -8,17 +8,28 @@ import PostsLists from './components/PostsList';
 import MyButton from './components/UI/button/MyButton';
 import Loader from './components/UI/Loader/Loader';
 import MyModal from './components/UI/MyModal/MyModal';
-
+import { useFetching } from './hooks/useFetching';
 import { usePosts } from './hooks/usePosts';
+import { getPageCount, getPagesArray } from './utils/pages'
 
 function App() {
 
   const [filter, setFilter] = useState({sort: "", query: ""})
   const [modal, setModal] = useState(false)
   const [posts, setPosts] = useState([])
-  const [isPostsLoading, setIsPostsLoading] = useState(false)
+  const [totalPage, setTotalPage] = useState(0)
+  const [limit, setLimit] = useState(10)
+  const [page, setPage] = useState(1)
 
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
+  const [fetchPost, isPostsLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll(limit, page)
+    setPosts(posts)
+    const totalcount = posts.headers["x-total-count"]
+    setTotalPage(getPageCount(totalcount, limit))
+  })
+
+  let pagesArray = getPagesArray(totalPage)
 
   // callBack функция получает информацию из дочернего элемента, и перезаписует его, активация происходит когда отрабатывает
   const createPost = (newPost) => {
@@ -31,13 +42,6 @@ function App() {
       return p.id !== post.id
     })))
 
-  }
-
-  const fetchPost = async () => {
-    setIsPostsLoading(true)
-    const posts = await PostService.getAll()
-    setPosts(posts)
-    setIsPostsLoading(false)
   }
 
   useEffect(() => {
@@ -60,10 +64,18 @@ function App() {
         filter={filter}
         setFilter={setFilter}
       />
+      {postError &&
+        <h1>Произошла ошибка ${postError}</h1>
+      }
       {isPostsLoading
         ? <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}><Loader /></div>
         : <PostsLists remove={deletedPost} posts={sortedAndSearchedPosts} title={"Tasks"}/>
       }
+      <div style={{marginTop: 30, }}>
+        {pagesArray.map(p => 
+          <span>{p}</span> 
+        )}
+      </div> 
     </div>
   );
 }
