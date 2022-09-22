@@ -20,16 +20,20 @@ function App() {
   const [totalPage, setTotalPage] = useState(0)
   const [limit, setLimit] = useState(10)
   const [page, setPage] = useState(1)
-
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
+  let pagesArray = getPagesArray(totalPage)
+
   const [fetchPost, isPostsLoading, postError] = useFetching(async () => {
-    const posts = await PostService.getAll(limit, page)
-    setPosts(posts)
-    const totalcount = posts.headers["x-total-count"]
-    setTotalPage(getPageCount(totalcount, limit))
+    const response = await PostService.getAll(limit, page)
+    setPosts(response.data)
+    const totalCount = response.headers["x-total-count"]
+    setTotalPage(getPageCount(totalCount, limit))
   })
 
-  let pagesArray = getPagesArray(totalPage)
+  const changePage = (page) => {
+    setPage(page)
+    fetchPost()
+  }
 
   // callBack функция получает информацию из дочернего элемента, и перезаписует его, активация происходит когда отрабатывает
   const createPost = (newPost) => {
@@ -71,9 +75,15 @@ function App() {
         ? <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}><Loader /></div>
         : <PostsLists remove={deletedPost} posts={sortedAndSearchedPosts} title={"Tasks"}/>
       }
-      <div style={{marginTop: 30, }}>
+      <div className="page__wrapper">
         {pagesArray.map(p => 
-          <span>{p}</span> 
+          <span 
+            onClick={() => changePage(p)}
+            key={p}
+            className={page === p ? "page page__current" : "page"}
+            >
+            {p}
+          </span> 
         )}
       </div> 
     </div>
