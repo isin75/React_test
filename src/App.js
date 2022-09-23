@@ -8,6 +8,7 @@ import PostsLists from './components/PostsList';
 import MyButton from './components/UI/button/MyButton';
 import Loader from './components/UI/Loader/Loader';
 import MyModal from './components/UI/MyModal/MyModal';
+import Pagination from './components/UI/pagination/Pagination';
 import { useFetching } from './hooks/useFetching';
 import { usePosts } from './hooks/usePosts';
 import { getPageCount, getPagesArray } from './utils/pages'
@@ -21,7 +22,6 @@ function App() {
   const [limit, setLimit] = useState(10)
   const [page, setPage] = useState(1)
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
-  let pagesArray = getPagesArray(totalPage)
 
   const [fetchPost, isPostsLoading, postError] = useFetching(async () => {
     const response = await PostService.getAll(limit, page)
@@ -32,7 +32,6 @@ function App() {
 
   const changePage = (page) => {
     setPage(page)
-    fetchPost()
   }
 
   // callBack функция получает информацию из дочернего элемента, и перезаписует его, активация происходит когда отрабатывает
@@ -50,7 +49,7 @@ function App() {
 
   useEffect(() => {
     fetchPost()
-  }, [])
+  }, [page])
 
   return (
     <div className="App">
@@ -75,17 +74,11 @@ function App() {
         ? <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}><Loader /></div>
         : <PostsLists remove={deletedPost} posts={sortedAndSearchedPosts} title={"Tasks"}/>
       }
-      <div className="page__wrapper">
-        {pagesArray.map(p => 
-          <span 
-            onClick={() => changePage(p)}
-            key={p}
-            className={page === p ? "page page__current" : "page"}
-            >
-            {p}
-          </span> 
-        )}
-      </div> 
+      <Pagination
+        totalPage={totalPage}
+        page={page}
+        changePage={changePage}
+      />
     </div>
   );
 }
